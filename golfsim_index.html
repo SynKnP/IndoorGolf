@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IndoorGolf Simulator – Marktbefragung</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07100a;
+      --surface: rgba(8, 22, 12, 0.88);
+      --surface2: rgba(15, 35, 20, 0.9);
+      --border: rgba(255, 255, 255, 0.1);
+      --gold: #d4a843;
+      --gold-light: #f0c96a;
+      --green: #2e7d4f;
+      --green-light: #3fa866;
+      --green-bright: #5dcc88;
+      --text: #f0ece4;
+      --muted: #8a9e90;
+      --accent: #1a3d24;
+      --red: #e05252;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: #07100a;
+    }
+
+    /* ─── GOLF COURSE BACKGROUND ─── */
+    .golf-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .golf-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      display: block;
+    }
+
+    .golf-bg-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg,
+          rgba(4, 10, 6, 0.62) 0%,
+          rgba(4, 10, 6, 0.28) 28%,
+          rgba(4, 10, 6, 0.45) 65%,
+          rgba(4, 10, 6, 0.92) 100%);
+    }
+
+    /* ─── TAB NAV ─── */
+    .tab-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      background: rgba(4, 12, 7, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(212, 168, 67, 0.2);
+      padding: 0 2rem;
+      gap: 0.5rem;
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      margin-right: auto;
+    }
+
+    .tab-btn {
+      padding: 1rem 1.4rem;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    .tab-btn:hover {
+      color: var(--gold-light);
+    }
+
+    /* ─── PAGES ─── */
+    .page {
+      display: none;
+      padding-top: 58px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ─── HERO ─── */
+    .survey-hero {
+      text-align: center;
+      padding: 4rem 2rem 2.5rem;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(212, 168, 67, 0.35);
+      padding: 0.4rem 1.1rem;
+      border-radius: 2px;
+      margin-bottom: 1.4rem;
+      backdrop-filter: blur(8px);
+      background: rgba(212, 168, 67, 0.06);
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      letter-spacing: 0.06em;
+      line-height: 1.05;
+      margin-bottom: 0.6rem;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .hero-title .gold {
+      color: var(--gold);
+    }
+
+    .hero-title .green {
+      color: var(--green-bright);
+    }
+
+    .hero-sub {
+      font-size: 0.92rem;
+      color: rgba(240, 236, 228, 0.75);
+      max-width: 480px;
+      margin: 0 auto 0.5rem;
+      line-height: 1.65;
+    }
+
+    .hero-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--green-bright);
+      margin-top: 0.5rem;
+    }
+
+    /* PROGRESS */
+    .progress-wrap {
+      max-width: 580px;
+      margin: 1.8rem auto 0;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-track {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    /* ─── FORM ─── */
+    .form-wrap {
+      max-width: 660px;
+      margin: 0 auto;
+      padding: 0 1.5rem 6rem;
+    }
+
+    .block-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      display: none;
+      animation: fadeUp 0.4s ease;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .block-card.visible {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .block-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.8rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .block-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 1px solid var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      color: var(--green-bright);
+      flex-shrink: 0;
+    }
+
+    .block-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+
+    .block-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    /* CONCEPT BOX */
+    .concept-box {
+      background: rgba(46, 125, 79, 0.1);
+      border: 1px solid rgba(46, 125, 79, 0.35);
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .concept-box h4 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--green-bright);
+      margin-bottom: 0.7rem;
+    }
+
+    .concept-box p {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: rgba(240, 236, 228, 0.85);
+    }
+
+    .concept-box strong {
+      color: var(--gold);
+    }
+
+    /* QUESTION */
+    .q {
+      margin-bottom: 1.8rem;
+    }
+
+    .q:last-of-type {
+      margin-bottom: 0.5rem;
+    }
+
+    .q-label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-bottom: 0.85rem;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .q-req {
+      color: var(--gold);
+    }
+
+    .q-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 400;
+      margin-left: 0.4rem;
+    }
+
+    .error-msg {
+      font-size: 0.75rem;
+      color: var(--red);
+      margin-top: 0.4rem;
+      display: none;
+    }
+
+    .error-msg.show {
+      display: block;
+    }
+
+    /* RADIO OPTIONS */
+    .opts {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.72rem 1rem;
+      background: rgba(15, 35, 20, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.87rem;
+      user-select: none;
+    }
+
+    .opt:hover {
+      border-color: rgba(212, 168, 67, 0.4);
+      background: rgba(212, 168, 67, 0.06);
+    }
+
+    .opt.selected {
+      border-color: var(--gold);
+      background: rgba(212, 168, 67, 0.1);
+      color: var(--gold-light);
+    }
+
+    .opt-dot {
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      border: 1.5px solid var(--muted);
+      flex-shrink: 0;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .opt.selected .opt-dot {
+      border-color: var(--gold);
+      background: var(--gold);
+    }
+
+    .opt.selected .opt-dot::after {
+      content: '';
+      width: 5px;
+      height: 5px;
+      background: #07100a;
+      border-radius: 50%;
+    }
+
+    /* CHIPS */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .chip {
+      padding: 0.48rem 1.05rem;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(15, 35, 20, 0.7);
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: all 0.2s;
+      color: var(--muted);
+      user-select: none;
+    }
+
+    .chip:hover {
+      border-color: rgba(212, 168, 67, 0.4);
+      color: var(--text);
+    }
+
+    .chip.selected {
+      border-color: var(--gold);
+      background: rgba(212, 168, 67, 0.12);
+      color: var(--gold-light);
+    }
+
+    /* GOLF BALL RATING */
+    .star-group {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .star {
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      transition: transform 0.15s, filter 0.15s;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .star svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .star:hover {
+      transform: scale(1.2);
+    }
+
+    /* empty = faint outline ball, lit = filled gold ball */
+
+    /* SLIDER */
+    .slider-wrap {
+      padding: 0.3rem 0;
+    }
+
+    .slider-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      letter-spacing: 0.05em;
+      color: var(--gold);
+      margin-bottom: 0.6rem;
+      line-height: 1;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      box-shadow: 0 0 14px rgba(212, 168, 67, 0.5);
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--muted);
+      margin-top: 0.45rem;
+    }
+
+    /* TEXT INPUTS */
+    input[type=text],
+    input[type=email],
+    textarea {
+      width: 100%;
+      background: rgba(15, 35, 20, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.87rem;
+      padding: 0.82rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+
+    input[type=text]:focus,
+    input[type=email]:focus,
+    textarea:focus {
+      border-color: rgba(212, 168, 67, 0.5);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--muted);
+    }
+
+    /* SEASON TABLE */
+    .season-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .season-table th {
+      padding: 0.6rem 0.8rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 500;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .season-table td {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.85rem;
+    }
+
+    .season-table tr:not(:last-child) td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .season-badge {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      border-radius: 3px;
+      font-size: 0.73rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    .badge-summer {
+      background: rgba(93, 204, 136, 0.18);
+      color: var(--green-bright);
+      border: 1px solid rgba(93, 204, 136, 0.3);
+    }
+
+    .badge-winter {
+      background: rgba(100, 140, 255, 0.15);
+      color: #90b4ff;
+      border: 1px solid rgba(100, 140, 255, 0.3);
+    }
+
+    .season-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .season-chip {
+      padding: 0.35rem 0.75rem;
+      border-radius: 16px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+      border: 1px solid var(--border);
+      background: rgba(15, 35, 20, 0.5);
+      color: var(--muted);
+    }
+
+    .season-chip.selected {
+      border-color: var(--gold);
+      background: rgba(212, 168, 67, 0.12);
+      color: var(--gold-light);
+    }
+
+    /* NAV */
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.88rem 1.8rem;
+      border-radius: 9px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      border: none;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-back {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .btn-back:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    .btn-next {
+      background: linear-gradient(135deg, var(--green), #1a5030);
+      color: #fff;
+      border: 1px solid var(--green);
+      flex: 1;
+      max-width: 200px;
+    }
+
+    .btn-next:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(46, 125, 79, 0.4);
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--gold), #9a6e1a);
+      color: #07100a;
+      font-weight: 700;
+      flex: 1;
+      max-width: 240px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(212, 168, 67, 0.4);
+    }
+
+    /* SUCCESS */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 5rem 2rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .success-screen.show {
+      display: block;
+    }
+
+    .success-icon {
+      font-size: 4.5rem;
+      margin-bottom: 1.5rem;
+      animation: popIn 0.5s ease;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      80% {
+        transform: scale(1.12);
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .success-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+
+    .success-sub {
+      color: rgba(240, 236, 228, 0.75);
+      line-height: 1.7;
+      font-size: 0.92rem;
+    }
+
+    /* ════════════════════════════════
+   DASHBOARD
+════════════════════════════════ */
+    .dash-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 6rem;
+    }
+
+    .dash-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .dash-title-group {}
+
+    .dash-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+    }
+
+    .dash-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--green-bright);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.5rem;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--green-bright);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: 0.5;
+        transform: scale(1.35)
+      }
+    }
+
+    /* FILTERS */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding: 1.2rem 1.4rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 1.8rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .filter-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      align-self: center;
+      margin-right: 0.4rem;
+    }
+
+    .filter-chip {
+      padding: 0.35rem 0.85rem;
+      border-radius: 16px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: rgba(15, 35, 20, 0.5);
+      color: var(--muted);
+      transition: all 0.2s;
+      user-select: none;
+    }
+
+    .filter-chip.active {
+      border-color: var(--gold);
+      background: rgba(212, 168, 67, 0.12);
+      color: var(--gold-light);
+    }
+
+    .filter-sep {
+      width: 1px;
+      background: var(--border);
+      align-self: stretch;
+    }
+
+    /* KPIs */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-align: center;
+      backdrop-filter: blur(16px);
+    }
+
+    .kpi-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      letter-spacing: 0.04em;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+
+    /* CHART GRID */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1.4rem;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .chart-card.wide {
+      grid-column: 1/-1;
+    }
+
+    .chart-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+    }
+
+    /* BAR CHART */
+    .bar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .bar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .bar-label {
+      font-size: 0.8rem;
+      min-width: 120px;
+      color: var(--text);
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      transition: width 1.1s ease;
+    }
+
+    .bar-pct {
+      font-size: 0.76rem;
+      color: var(--gold);
+      min-width: 34px;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    /* PRICE HISTO */
+    .histo {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 90px;
+      margin-top: 0.5rem;
+    }
+
+    .histo-bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+      min-height: 4px;
+      background: linear-gradient(180deg, var(--gold-light), var(--green));
+      transition: height 1s ease;
+      cursor: default;
+      position: relative;
+    }
+
+    .histo-bar:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: calc(100% + 4px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .histo-x {
+      display: flex;
+      gap: 5px;
+      margin-top: 0.4rem;
+    }
+
+    .histo-x span {
+      flex: 1;
+      text-align: center;
+      font-size: 0.62rem;
+      color: var(--muted);
+    }
+
+    /* FEATURE METERS */
+    .meter-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .meter-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .meter-score {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .meter-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      transition: width 1.2s ease;
+    }
+
+    .meter-stars {
+      color: var(--gold);
+      font-size: 0.78rem;
+    }
+
+    /* REGION TOP 10 */
+    .region-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .region-row {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .region-rank {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--muted);
+      min-width: 22px;
+    }
+
+    .region-name {
+      font-size: 0.82rem;
+      flex: 1;
+    }
+
+    .region-bar {
+      width: 80px;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .region-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-bright), var(--gold));
+      border-radius: 3px;
+    }
+
+    .region-count {
+      font-size: 0.78rem;
+      color: var(--gold);
+      font-weight: 600;
+      min-width: 20px;
+      text-align: right;
+    }
+
+    /* TIMELINE */
+    .timeline-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 5px;
+      height: 70px;
+    }
+
+    .tl-bar {
+      flex: 1;
+      background: var(--green);
+      border-radius: 3px 3px 0 0;
+      opacity: 0.75;
+      transition: height 1s ease;
+      min-height: 2px;
+    }
+
+    .tl-bar:hover {
+      opacity: 1;
+    }
+
+    .tl-x {
+      display: flex;
+      gap: 5px;
+      margin-top: 0.4rem;
+    }
+
+    .tl-x span {
+      flex: 1;
+      text-align: center;
+      font-size: 0.6rem;
+      color: var(--muted);
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 2rem;
+      color: var(--muted);
+      font-size: 0.83rem;
+    }
+
+    .dash-note {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- GOLF COURSE BACKGROUND — real photo via Unsplash -->
+  <div class="golf-bg">
+    <img src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1920&q=80&fit=crop&crop=center"
+      alt="Traumhafter Golfplatz"
+      onerror="this.src='https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?w=1920&q=80&fit=crop'" />
+    <div class="golf-bg-overlay"></div>
+  </div>
+
+  <!-- ═══════════════ NAV ═══════════════ -->
+  <nav class="tab-nav">
+    <div class="nav-logo">⛳ GolfSim</div>
+    <button class="tab-btn active" onclick="switchTab('survey',this)">Umfrage</button>
+    <button class="tab-btn" onclick="switchTab('dashboard',this)">Auswertung</button>
+  </nav>
+
+  <!-- ═══════════════ SURVEY PAGE ═══════════════ -->
+  <div id="page-survey" class="page active">
+    <div class="survey-hero">
+      <div class="hero-eyebrow">⛳ Marktbefragung 2025</div>
+      <h1 class="hero-title"><span class="gold">Indoor</span><span class="green">Golf</span> Simulator</h1>
+      <p class="hero-sub">Deine Meinung formt ein einzigartiges Erlebnis. Anonym &amp; sicher.</p>
+      <div class="hero-time">⏱ ca. 3–4 Minuten</div>
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="step-label">Block 1 von 7</span>
+          <span id="step-pct">0 %</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-wrap">
+      <!-- SUCCESS -->
+      <div class="success-screen" id="success">
+        <div class="success-icon">🏌️‍♂️</div>
+        <div class="success-title">Birdie! Danke!</div>
+        <p class="success-sub">Deine Antworten wurden gespeichert und helfen uns, das perfekte Indoor-Golf-Erlebnis zu
+          gestalten.<br><br>Wir melden uns, sobald es losgeht!</p>
+      </div>
+
+      <!-- ── BLOCK A: Profil ── -->
+      <div class="block-card visible" id="block-1">
+        <div class="block-header">
+          <div class="block-badge">A</div>
+          <div>
+            <div class="block-title">Dein Profil</div>
+            <div class="block-sub">Kurz &amp; schnell — keine persönlichen Daten erforderlich</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Wie alt bist du? <span class="q-req">*</span></label>
+          <div class="chips" id="q-age">
+            <div class="chip" onclick="selectChip(this,'q-age')">Unter 25</div>
+            <div class="chip" onclick="selectChip(this,'q-age')">25–34</div>
+            <div class="chip" onclick="selectChip(this,'q-age')">35–44</div>
+            <div class="chip" onclick="selectChip(this,'q-age')">45–54</div>
+            <div class="chip" onclick="selectChip(this,'q-age')">55–64</div>
+            <div class="chip" onclick="selectChip(this,'q-age')">65+</div>
+          </div>
+          <div class="error-msg" id="err-age">Bitte eine Altersgruppe auswählen.</div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Beschäftigungsstatus <span class="q-req">*</span></label>
+          <div class="opts" id="q-status">
+            <div class="opt" onclick="selectOpt(this,'q-status')">
+              <div class="opt-dot"></div>Berufstätig (Vollzeit)
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-status')">
+              <div class="opt-dot"></div>Berufstätig (Teilzeit / Selbstständig)
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-status')">
+              <div class="opt-dot"></div>Student / Schüler
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-status')">
+              <div class="opt-dot"></div>Rentner / Pensionär
+            </div>
+          </div>
+          <div class="error-msg" id="err-status">Bitte eine Option auswählen.</div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Deine Region / PLZ-Bereich <span class="q-req">*</span></label>
+          <input type="text" id="q-plz" placeholder="z.B. 99867 oder Gotha, Erfurt …" maxlength="30">
+          <div class="error-msg" id="err-plz">Bitte Region oder PLZ angeben.</div>
+        </div>
+
+        <div class="nav-row"><span></span><button class="btn btn-next" onclick="nextBlock(1)">Weiter →</button></div>
+      </div>
+
+      <!-- ── BLOCK B: Golf ── -->
+      <div class="block-card" id="block-2">
+        <div class="block-header">
+          <div class="block-badge">B</div>
+          <div>
+            <div class="block-title">Golf &amp; Simulator-Erfahrung</div>
+            <div class="block-sub">Dein aktueller Stand</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Was trifft auf dich zu? <span class="q-req">*</span></label>
+          <div class="opts" id="q-golfer">
+            <div class="opt" onclick="selectOpt(this,'q-golfer')">
+              <div class="opt-dot"></div>Ich spiele aktiv Golf (mit DGV-Ausweis / Handicap)
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-golfer')">
+              <div class="opt-dot"></div>Ich spiele gelegentlich (kein offizieller Ausweis)
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-golfer')">
+              <div class="opt-dot"></div>Ich interessiere mich für Golf, spiele aber noch nicht
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-golfer')">
+              <div class="opt-dot"></div>Golf ist (noch) nicht mein Thema
+            </div>
+          </div>
+          <div class="error-msg" id="err-golfer">Bitte eine Option auswählen.</div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Dein Handicap (falls vorhanden)</label>
+          <div class="chips" id="q-hcp">
+            <div class="chip" onclick="selectChip(this,'q-hcp')">Scratch / unter 0</div>
+            <div class="chip" onclick="selectChip(this,'q-hcp')">0 – 10</div>
+            <div class="chip" onclick="selectChip(this,'q-hcp')">11 – 18</div>
+            <div class="chip" onclick="selectChip(this,'q-hcp')">19 – 36</div>
+            <div class="chip" onclick="selectChip(this,'q-hcp')">Kein HCP / N/A</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Hast du bereits einen Golf-Simulator genutzt? <span class="q-req">*</span></label>
+          <div class="opts" id="q-sim-exp">
+            <div class="opt" onclick="selectOpt(this,'q-sim-exp')">
+              <div class="opt-dot"></div>Ja, regelmäßig
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-sim-exp')">
+              <div class="opt-dot"></div>Ja, ein- oder zweimal
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-sim-exp')">
+              <div class="opt-dot"></div>Nein, aber ich hätte Interesse
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-sim-exp')">
+              <div class="opt-dot"></div>Nein, kein Interesse
+            </div>
+          </div>
+          <div class="error-msg" id="err-sim-exp">Bitte eine Option auswählen.</div>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn btn-back" onclick="prevBlock(2)">← Zurück</button>
+          <button class="btn btn-next" onclick="nextBlock(2)">Weiter →</button>
+        </div>
+      </div>
+
+      <!-- ── BLOCK C: Interesse ── -->
+      <div class="block-card" id="block-3">
+        <div class="block-header">
+          <div class="block-badge">C</div>
+          <div>
+            <div class="block-title">Interesse &amp; Nutzung</div>
+            <div class="block-sub">Wie würdest du den Simulator einsetzen?</div>
+          </div>
+        </div>
+
+        <!-- CONCEPT BOX -->
+        <div class="concept-box">
+          <h4>🏌️ Das Konzept — kurz erklärt</h4>
+          <p>Ein <strong>privater Indoor-Golf-Simulator</strong> für 1–4 Personen: vollautomatischer Zugang per Code,
+            hochmoderne Simulator-Box auf Profi-Niveau, gemütliche Lounge-Ecke, Kaffee &amp; Getränke, Umkleidekabine
+            und Ausrüstungsverleih — <strong>buchbar rund um die Uhr</strong>, ohne Personal, in exklusiver Atmosphäre.
+          </p>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Wie interessant findest du dieses Konzept? <span class="q-req">*</span></label>
+          <div class="star-group" id="q-interest" data-val="0">
+            <span class="star" onclick="rateStar('q-interest',1)" title="1 – Wenig interessant"></span>
+            <span class="star" onclick="rateStar('q-interest',2)" title="2"></span>
+            <span class="star" onclick="rateStar('q-interest',3)" title="3 – Neutral"></span>
+            <span class="star" onclick="rateStar('q-interest',4)" title="4"></span>
+            <span class="star" onclick="rateStar('q-interest',5)" title="5 – Sehr interessant"></span>
+          </div>
+          <div class="error-msg" id="err-interest">Bitte Interesse bewerten.</div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Für welchen Zweck würdest du buchen? <span class="q-hint">(Mehrfachauswahl
+              möglich)</span></label>
+          <div class="chips" id="q-usecase">
+            <div class="chip" onclick="toggleChip(this)">🏋️ Training &amp; Technik</div>
+            <div class="chip" onclick="toggleChip(this)">⛳ Spaß &amp; Freizeit</div>
+            <div class="chip" onclick="toggleChip(this)">👥 Gruppen-Event</div>
+            <div class="chip" onclick="toggleChip(this)">🆕 Schnuppern / Einsteiger</div>
+            <div class="chip" onclick="toggleChip(this)">🏆 Wettbewerb</div>
+            <div class="chip" onclick="toggleChip(this)">🎁 Geschenkidee</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Wann würdest du am liebsten spielen? <span class="q-hint">(Mehrfachauswahl
+              möglich)</span></label>
+          <div class="chips" id="q-time">
+            <div class="chip" onclick="toggleChip(this)">Mo–Fr Vormittag</div>
+            <div class="chip" onclick="toggleChip(this)">Mo–Fr Mittag</div>
+            <div class="chip" onclick="toggleChip(this)">Mo–Fr Abend</div>
+            <div class="chip" onclick="toggleChip(this)">Samstag</div>
+            <div class="chip" onclick="toggleChip(this)">Sonntag</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Wie viele Personen kommen typischerweise mit? <span class="q-req">*</span></label>
+          <div class="opts" id="q-group">
+            <div class="opt" onclick="selectOpt(this,'q-group')">
+              <div class="opt-dot"></div>Alleine — ich trainiere solo
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-group')">
+              <div class="opt-dot"></div>Zu zweit — mit Partner / Freund
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-group')">
+              <div class="opt-dot"></div>3–4 Personen — kleine Gruppe
+            </div>
+          </div>
+          <div class="error-msg" id="err-group">Bitte eine Option auswählen.</div>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn btn-back" onclick="prevBlock(3)">← Zurück</button>
+          <button class="btn btn-next" onclick="nextBlock(3)">Weiter →</button>
+        </div>
+      </div>
+
+      <!-- ── BLOCK D: Preis & Häufigkeit ── -->
+      <div class="block-card" id="block-4">
+        <div class="block-header">
+          <div class="block-badge">D</div>
+          <div>
+            <div class="block-title">Preis &amp; Buchungsverhalten</div>
+            <div class="block-sub">Deine ehrliche Einschätzung hilft uns enorm</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Welchen Stunden-Preis findest du fair? (1–2 Personen) <span
+              class="q-req">*</span></label>
+          <div class="slider-wrap">
+            <div class="slider-val" id="price-val">45 €</div>
+            <input type="range" id="q-price" min="25" max="75" step="5" value="45"
+              oninput="updateSlider('q-price','price-val','€')">
+            <div class="slider-labels"><span>25 €</span><span>50 €</span><span>75 €</span></div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Würdest du ein Paket- / Abo-Modell nutzen?</label>
+          <div class="opts" id="q-abo">
+            <div class="opt" onclick="selectOpt(this,'q-abo')">
+              <div class="opt-dot"></div>Ja, sehr gerne — festes Kontingent pro Monat
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-abo')">
+              <div class="opt-dot"></div>Vielleicht, kommt auf Preis &amp; Konditionen an
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-abo')">
+              <div class="opt-dot"></div>Nein, ich buche lieber einzeln
+            </div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Wie häufig würdest du voraussichtlich buchen? <span class="q-req">*</span>
+            <span class="q-hint">(Bitte beide Saisonhälften einschätzen)</span>
+          </label>
+          <table class="season-table">
+            <thead>
+              <tr>
+                <th>Saison</th>
+                <th>Nutzungshäufigkeit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="season-badge badge-summer">☀️ Apr – Sep</span><br><small
+                    style="color:var(--muted);font-size:0.72rem">Outdoor-Saison</small></td>
+                <td>
+                  <div class="season-chips" id="q-freq-summer">
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">Mehrmals/Woche</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">1×/Woche</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">2–3×/Monat</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">1×/Monat</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">Selten / Events</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">Gar nicht</div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="season-badge badge-winter">❄️ Okt – Mär</span><br><small
+                    style="color:var(--muted);font-size:0.72rem">Wintersaison</small></td>
+                <td>
+                  <div class="season-chips" id="q-freq-winter">
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">Mehrmals/Woche</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">1×/Woche</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">2–3×/Monat</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">1×/Monat</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">Selten / Events</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">Gar nicht</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="error-msg" id="err-freq">Bitte für beide Saisonhälften eine Häufigkeit wählen.</div>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn btn-back" onclick="prevBlock(4)">← Zurück</button>
+          <button class="btn btn-next" onclick="nextBlock(4)">Weiter →</button>
+        </div>
+      </div>
+
+      <!-- ── BLOCK E: Konzept-Features ── -->
+      <div class="block-card" id="block-5">
+        <div class="block-header">
+          <div class="block-badge">E</div>
+          <div>
+            <div class="block-title">Feature-Bewertung</div>
+            <div class="block-sub">Was ist dir wie wichtig? (1 = unwichtig, 5 = unverzichtbar)</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Bewerte die einzelnen Ausstattungsmerkmale <span class="q-req">*</span></label>
+          <div style="display:flex;flex-direction:column;gap:1.2rem;margin-top:0.5rem;">
+
+            <div>
+              <div style="font-size:0.84rem;margin-bottom:0.5rem;color:var(--text);">🤖 Vollautomatisierter Zugang
+                (Code-Schloss, kein Personal nötig)</div>
+              <div class="star-group" id="feat-auto" data-val="0">
+                <span class="star" onclick="rateStar('feat-auto',1)"></span><span class="star"
+                  onclick="rateStar('feat-auto',2)"></span><span class="star"
+                  onclick="rateStar('feat-auto',3)"></span><span class="star"
+                  onclick="rateStar('feat-auto',4)"></span><span class="star" onclick="rateStar('feat-auto',5)"></span>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:0.84rem;margin-bottom:0.5rem;color:var(--text);">☕ Verpflegungsecke (Kaffee, Snacks,
+                Getränke)</div>
+              <div class="star-group" id="feat-food" data-val="0">
+                <span class="star" onclick="rateStar('feat-food',1)"></span><span class="star"
+                  onclick="rateStar('feat-food',2)"></span><span class="star"
+                  onclick="rateStar('feat-food',3)"></span><span class="star"
+                  onclick="rateStar('feat-food',4)"></span><span class="star" onclick="rateStar('feat-food',5)"></span>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:0.84rem;margin-bottom:0.5rem;color:var(--text);">🛋️ Gemütliche Lounge-Sitzecke
+                &amp; Atmosphäre</div>
+              <div class="star-group" id="feat-lounge" data-val="0">
+                <span class="star" onclick="rateStar('feat-lounge',1)"></span><span class="star"
+                  onclick="rateStar('feat-lounge',2)"></span><span class="star"
+                  onclick="rateStar('feat-lounge',3)"></span><span class="star"
+                  onclick="rateStar('feat-lounge',4)"></span><span class="star"
+                  onclick="rateStar('feat-lounge',5)"></span>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:0.84rem;margin-bottom:0.5rem;color:var(--text);">🚿 Großer Sanitärbereich mit Dusche
+                &amp; Umkleidekabine</div>
+              <div class="star-group" id="feat-shower" data-val="0">
+                <span class="star" onclick="rateStar('feat-shower',1)"></span><span class="star"
+                  onclick="rateStar('feat-shower',2)"></span><span class="star"
+                  onclick="rateStar('feat-shower',3)"></span><span class="star"
+                  onclick="rateStar('feat-shower',4)"></span><span class="star"
+                  onclick="rateStar('feat-shower',5)"></span>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:0.84rem;margin-bottom:0.5rem;color:var(--text);">👨‍💼 Personal / Betreuung vor Ort
+                (auf Wunsch buchbar)</div>
+              <div class="star-group" id="feat-staff" data-val="0">
+                <span class="star" onclick="rateStar('feat-staff',1)"></span><span class="star"
+                  onclick="rateStar('feat-staff',2)"></span><span class="star"
+                  onclick="rateStar('feat-staff',3)"></span><span class="star"
+                  onclick="rateStar('feat-staff',4)"></span><span class="star"
+                  onclick="rateStar('feat-staff',5)"></span>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:0.84rem;margin-bottom:0.5rem;color:var(--text);">📊 Abruf &amp; Analyse eigener
+                Trainingsdaten (Schlagdaten, Fortschritt)</div>
+              <div class="star-group" id="feat-data" data-val="0">
+                <span class="star" onclick="rateStar('feat-data',1)"></span><span class="star"
+                  onclick="rateStar('feat-data',2)"></span><span class="star"
+                  onclick="rateStar('feat-data',3)"></span><span class="star"
+                  onclick="rateStar('feat-data',4)"></span><span class="star" onclick="rateStar('feat-data',5)"></span>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size:0.84rem;margin-bottom:0.5rem;color:var(--text);">🏌️ Golf-Equipment zur Miete
+                (Schläger, Schuhe, Handschuh)</div>
+              <div class="star-group" id="feat-equip" data-val="0">
+                <span class="star" onclick="rateStar('feat-equip',1)"></span><span class="star"
+                  onclick="rateStar('feat-equip',2)"></span><span class="star"
+                  onclick="rateStar('feat-equip',3)"></span><span class="star"
+                  onclick="rateStar('feat-equip',4)"></span><span class="star"
+                  onclick="rateStar('feat-equip',5)"></span>
+              </div>
+            </div>
+
+          </div>
+          <div class="error-msg" id="err-feats">Bitte alle Features bewerten.</div>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn btn-back" onclick="prevBlock(5)">← Zurück</button>
+          <button class="btn btn-next" onclick="nextBlock(5)">Weiter →</button>
+        </div>
+      </div>
+
+      <!-- ── BLOCK F: Standort ── -->
+      <div class="block-card" id="block-6">
+        <div class="block-header">
+          <div class="block-badge">F</div>
+          <div>
+            <div class="block-title">Standort &amp; Erreichbarkeit</div>
+            <div class="block-sub">Damit wir die optimale Location finden</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Wie weit würdest du für eine Session fahren? <span class="q-req">*</span></label>
+          <div class="opts" id="q-dist">
+            <div class="opt" onclick="selectOpt(this,'q-dist')">
+              <div class="opt-dot"></div>Bis 5 km — zu Fuß oder mit dem Fahrrad
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-dist')">
+              <div class="opt-dot"></div>5–15 km
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-dist')">
+              <div class="opt-dot"></div>15–30 km
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-dist')">
+              <div class="opt-dot"></div>Über 30 km — wenn das Angebot überzeugt
+            </div>
+          </div>
+          <div class="error-msg" id="err-dist">Bitte eine Option auswählen.</div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Welche Lage bevorzugst du?</label>
+          <div class="chips" id="q-lage">
+            <div class="chip" onclick="selectChip(this,'q-lage')">Stadtzentrum</div>
+            <div class="chip" onclick="selectChip(this,'q-lage')">Stadtrand</div>
+            <div class="chip" onclick="selectChip(this,'q-lage')">Gewerbegebiet</div>
+            <div class="chip" onclick="selectChip(this,'q-lage')">Ländlich / Grün</div>
+            <div class="chip" onclick="selectChip(this,'q-lage')">Ist mir egal</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Wie kommst du hin? <span class="q-hint">(Mehrfachauswahl möglich)</span></label>
+          <div class="chips" id="q-transport">
+            <div class="chip" onclick="toggleChip(this)">🚗 Auto</div>
+            <div class="chip" onclick="toggleChip(this)">🚴 Fahrrad / E-Bike</div>
+            <div class="chip" onclick="toggleChip(this)">🚶 Zu Fuß</div>
+            <div class="chip" onclick="toggleChip(this)">🚌 Bus / Bahn</div>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn btn-back" onclick="prevBlock(6)">← Zurück</button>
+          <button class="btn btn-next" onclick="nextBlock(6)">Weiter →</button>
+        </div>
+      </div>
+
+      <!-- ── BLOCK G: Abschluss ── -->
+      <div class="block-card" id="block-7">
+        <div class="block-header">
+          <div class="block-badge">G</div>
+          <div>
+            <div class="block-title">Fast am Loch! 🏌️</div>
+            <div class="block-sub">Noch ein paar letzte Fragen</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Würdest du dieses Konzept weiterempfehlen? <span class="q-req">*</span></label>
+          <div class="opts" id="q-recommend">
+            <div class="opt" onclick="selectOpt(this,'q-recommend')">
+              <div class="opt-dot"></div>Ja, absolut sofort!
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-recommend')">
+              <div class="opt-dot"></div>Eher ja — klingt sehr interessant
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-recommend')">
+              <div class="opt-dot"></div>Kommt auf Preis &amp; Lage an
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-recommend')">
+              <div class="opt-dot"></div>Eher nicht mein Ding
+            </div>
+          </div>
+          <div class="error-msg" id="err-recommend">Bitte eine Option auswählen.</div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Wie bist du auf diese Umfrage aufmerksam geworden?</label>
+          <div class="chips" id="q-source">
+            <div class="chip" onclick="selectChip(this,'q-source')">E-Mail</div>
+            <div class="chip" onclick="selectChip(this,'q-source')">QR-Code / Aushang</div>
+            <div class="chip" onclick="selectChip(this,'q-source')">Social Media</div>
+            <div class="chip" onclick="selectChip(this,'q-source')">Bekannte / Freunde</div>
+            <div class="chip" onclick="selectChip(this,'q-source')">Golfclub</div>
+            <div class="chip" onclick="selectChip(this,'q-source')">Website</div>
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">
+            Möchtest du über die Eröffnung informiert werden? <span class="q-hint">(vollkommen freiwillig)</span>
+          </label>
+          <input type="email" id="q-email" placeholder="deine@email.de">
+          <div style="font-size:0.74rem;color:var(--muted);margin-top:0.5rem;line-height:1.55;">
+            🔒 Deine E-Mail wird <strong style="color:var(--text);">nicht</strong> mit deinen Umfrageantworten verknüpft
+            und ausschließlich für die Eröffnungsbenachrichtigung verwendet.
+          </div>
+        </div>
+
+        <div class="q">
+          <label class="q-label">Anregungen, Wünsche oder Ideen?</label>
+          <textarea id="q-comment" rows="3" placeholder="Was würde das Erlebnis für dich perfekt machen?"></textarea>
+        </div>
+
+        <div class="nav-row">
+          <button class="btn btn-back" onclick="prevBlock(7)">← Zurück</button>
+          <button class="btn btn-submit" onclick="submitForm()">Absenden ⛳</button>
+        </div>
+      </div>
+    </div><!-- /form-wrap -->
+  </div><!-- /page-survey -->
+
+  <!-- ═══════════════ DASHBOARD PAGE ═══════════════ -->
+  <div id="page-dashboard" class="page">
+    <div class="dash-wrap">
+      <div class="dash-top">
+        <div class="dash-title-group">
+          <div class="dash-title">Marktanalyse</div>
+          <div class="dash-sub">IndoorGolf Simulator — Auswertungs-Dashboard</div>
+          <div class="live-badge">
+            <div class="live-dot"></div>Live-Daten
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <span class="filter-label">Filter:</span>
+        <div id="filter-age-chips" style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+          <div class="filter-chip active" onclick="toggleFilter('age','Alle',this)">Alle Altersgruppen</div>
+          <div class="filter-chip" onclick="toggleFilter('age','Unter 25',this)">Unter 25</div>
+          <div class="filter-chip" onclick="toggleFilter('age','25–34',this)">25–34</div>
+          <div class="filter-chip" onclick="toggleFilter('age','35–44',this)">35–44</div>
+          <div class="filter-chip" onclick="toggleFilter('age','45–54',this)">45–54</div>
+          <div class="filter-chip" onclick="toggleFilter('age','55–64',this)">55–64</div>
+          <div class="filter-chip" onclick="toggleFilter('age','65+',this)">65+</div>
+        </div>
+        <div class="filter-sep"></div>
+        <div id="filter-golf-chips" style="display:flex;flex-wrap:wrap;gap:0.35rem;">
+          <div class="filter-chip active" onclick="toggleFilter('golf','Alle',this)">Alle Golf-Status</div>
+          <div class="filter-chip" onclick="toggleFilter('golf','aktiv',this)">Aktiv</div>
+          <div class="filter-chip" onclick="toggleFilter('golf','gelegentlich',this)">Gelegentlich</div>
+          <div class="filter-chip" onclick="toggleFilter('golf','interessiere',this)">Interessiert</div>
+          <div class="filter-chip" onclick="toggleFilter('golf','nicht mein',this)">Kein Golf</div>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="kpi-val" id="kpi-total">0</div>
+          <div class="kpi-label">Antworten</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val" id="kpi-golfer">–</div>
+          <div class="kpi-label">Aktive Golfer</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val" id="kpi-price">–</div>
+          <div class="kpi-label">Ø Preis/h</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val" id="kpi-interest">–</div>
+          <div class="kpi-label">Ø Interesse</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val" id="kpi-recommend">–</div>
+          <div class="kpi-label">Empfehlungsrate</div>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+        <!-- Altersverteilung -->
+        <div class="chart-card">
+          <div class="chart-title">Altersgruppen</div>
+          <div class="bar-list" id="chart-age"></div>
+        </div>
+
+        <!-- Golf-Status -->
+        <div class="chart-card">
+          <div class="chart-title">Golf-Status</div>
+          <div class="bar-list" id="chart-golfer"></div>
+        </div>
+
+        <!-- Region Top 10 -->
+        <div class="chart-card">
+          <div class="chart-title">Top-10 Regionen / PLZ</div>
+          <div class="region-list" id="chart-region"></div>
+        </div>
+
+        <!-- Preisbereitschaft -->
+        <div class="chart-card">
+          <div class="chart-title">Preisbereitschaft pro Stunde</div>
+          <div class="histo" id="chart-price"></div>
+          <div class="histo-x" id="chart-price-x"></div>
+        </div>
+
+        <!-- Nutzungszweck -->
+        <div class="chart-card">
+          <div class="chart-title">Nutzungszweck</div>
+          <div class="bar-list" id="chart-usecase"></div>
+        </div>
+
+        <!-- Buchungshäufigkeit Sommer vs Winter -->
+        <div class="chart-card">
+          <div class="chart-title">Buchungshäufigkeit — Sommer vs. Winter</div>
+          <div class="bar-list" id="chart-freq"></div>
+        </div>
+
+        <!-- Feature-Bewertung -->
+        <div class="chart-card wide">
+          <div class="chart-title">Feature-Wichtigkeit (Ø Sterne — nur bewertete)</div>
+          <div class="meter-list" id="chart-features"></div>
+        </div>
+
+        <!-- Empfehlung -->
+        <div class="chart-card">
+          <div class="chart-title">Weiterempfehlung</div>
+          <div class="bar-list" id="chart-recommend"></div>
+        </div>
+
+        <!-- Anfahrtsbereitschaft -->
+        <div class="chart-card">
+          <div class="chart-title">Anfahrtsbereitschaft</div>
+          <div class="bar-list" id="chart-dist"></div>
+        </div>
+
+        <!-- Zeitlicher Eingang -->
+        <div class="chart-card wide">
+          <div class="chart-title">Antworten über Zeit</div>
+          <div class="timeline-bars" id="chart-timeline"></div>
+          <div class="tl-x" id="chart-timeline-x"></div>
+        </div>
+      </div>
+
+      <div class="dash-note">
+        Alle Daten dieser Sitzung. Für persistente 3-Monats-Auswertung: Anbindung an Airtable, Supabase oder Google
+        Sheets empfohlen.<br>
+        Filterung nach Altersgruppe oder Golf-Status oben aktiv.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════
+    //  STATE
+    // ═══════════════════════════════════════
+    let currentBlock = 1;
+    const TOTAL = 7;
+    const submissions = [];
+    let filters = { age: 'Alle', golf: 'Alle' };
+
+    // Init all ball icons to empty on load
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.star').forEach(s => { s.innerHTML = BALL_EMPTY; });
+    });
+
+    // ═══════════════════════════════════════
+    //  TAB
+    // ═══════════════════════════════════════
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + tab).classList.add('active');
+      btn.classList.add('active');
+      if (tab === 'dashboard') renderDashboard();
+    }
+
+    // ═══════════════════════════════════════
+    //  SELECTION HELPERS
+    // ═══════════════════════════════════════
+    function selectOpt(el, group) {
+      document.querySelectorAll('#' + group + ' .opt').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    function selectChip(el, group) {
+      document.querySelectorAll('#' + group + ' .chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    function toggleChip(el) { el.classList.toggle('selected'); }
+    function selectSeasonChip(el, group) {
+      document.querySelectorAll('#' + group + ' .season-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    // Golf ball SVGs
+    const BALL_EMPTY = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="16" cy="16" r="13" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
+  <circle cx="16" cy="16" r="4" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
+  <path d="M16 3 Q18 8 16 10 Q14 8 16 3" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+  <path d="M29 16 Q24 18 22 16 Q24 14 29 16" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+</svg>`;
+    const BALL_FILLED = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg${Math.random().toString(36).slice(2)}" cx="38%" cy="32%" r="62%">
+      <stop offset="0%" stop-color="#f0c96a"/>
+      <stop offset="55%" stop-color="#d4a843"/>
+      <stop offset="100%" stop-color="#8a6010"/>
+    </radialGradient>
+  </defs>
+  <circle cx="16" cy="16" r="13.5" fill="url(#bg${Math.random().toString(36).slice(2)})" filter="url(#gs)"/>
+  <circle cx="16" cy="16" r="13.5" fill="none" stroke="rgba(212,168,67,0.6)" stroke-width="1"/>
+  <path d="M12 11 Q14 9 16 11 Q14 13 12 11Z" fill="rgba(255,255,255,0.25)"/>
+  <path d="M20 14 Q22 12 23 14 Q21 16 20 14Z" fill="rgba(255,255,255,0.18)"/>
+  <path d="M11 16 Q10 18 12 19 Q13 17 11 16Z" fill="rgba(255,255,255,0.15)"/>
+  <path d="M18 20 Q20 19 21 21 Q19 22 18 20Z" fill="rgba(255,255,255,0.13)"/>
+  <path d="M14 19 Q13 21 15 22 Q16 20 14 19Z" fill="rgba(255,255,255,0.13)"/>
+  <filter id="gs"><feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+</svg>`;
+
+    function makeBallHTML(id, count = 5) {
+      let html = '';
+      for (let i = 1; i <= count; i++) {
+        html += `<span class="star" onclick="rateStar('${id}',${i})" data-idx="${i}" title="${i} von 5">${BALL_EMPTY}</span>`;
+      }
+      return html;
+    }
+
+    function rateStar(group, val) {
+      const container = document.getElementById(group);
+      if (!container) return;
+      const stars = container.querySelectorAll('.star');
+      stars.forEach((s, i) => {
+        if (i < val) {
+          s.innerHTML = BALL_FILLED;
+          s.style.filter = 'drop-shadow(0 0 6px rgba(212,168,67,0.6))';
+        } else {
+          s.innerHTML = BALL_EMPTY;
+          s.style.filter = 'none';
+        }
+      });
+      container.dataset.val = val;
+    }
+    function updateSlider(id, valId, suffix) {
+      document.getElementById(valId).textContent = document.getElementById(id).value + ' ' + suffix;
+    }
+
+    // ═══════════════════════════════════════
+    //  DATA HELPERS
+    // ═══════════════════════════════════════
+    function getSelected(id, cls = 'chip') {
+      return Array.from(document.querySelectorAll('#' + id + ' .' + cls + '.selected')).map(e => e.textContent.trim());
+    }
+    function getStars(id) {
+      const v = parseInt(document.getElementById(id)?.dataset?.val || '0');
+      return v; // 0 means not rated
+    }
+    function getSeasonChip(id) {
+      const s = document.querySelector('#' + id + ' .season-chip.selected');
+      return s ? s.textContent.trim() : '';
+    }
+
+    // ═══════════════════════════════════════
+    //  VALIDATION
+    // ═══════════════════════════════════════
+    function showErr(id, show) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('show', show);
+    }
+    function validateBlock(n) {
+      let ok = true;
+      if (n === 1) {
+        const age = getSelected('q-age').length > 0; showErr('err-age', !age); if (!age) ok = false;
+        const st = getSelected('q-status', 'opt').length > 0; showErr('err-status', !st); if (!st) ok = false;
+        const plz = document.getElementById('q-plz').value.trim().length > 0; showErr('err-plz', !plz); if (!plz) ok = false;
+      }
+      if (n === 2) {
+        const g = getSelected('q-golfer', 'opt').length > 0; showErr('err-golfer', !g); if (!g) ok = false;
+        const s = getSelected('q-sim-exp', 'opt').length > 0; showErr('err-sim-exp', !s); if (!s) ok = false;
+      }
+      if (n === 3) {
+        const i = getStars('q-interest') > 0; showErr('err-interest', !i); if (!i) ok = false;
+        const gr = getSelected('q-group', 'opt').length > 0; showErr('err-group', !gr); if (!gr) ok = false;
+      }
+      if (n === 4) {
+        const fs = getSeasonChip('q-freq-summer') !== '';
+        const fw = getSeasonChip('q-freq-winter') !== '';
+        showErr('err-freq', !(fs && fw)); if (!(fs && fw)) ok = false;
+      }
+      if (n === 6) {
+        const d = getSelected('q-dist', 'opt').length > 0; showErr('err-dist', !d); if (!d) ok = false;
+      }
+      if (n === 7) {
+        const r = getSelected('q-recommend', 'opt').length > 0; showErr('err-recommend', !r); if (!r) ok = false;
+      }
+      return ok;
+    }
+
+    // ═══════════════════════════════════════
+    //  NAVIGATION
+    // ═══════════════════════════════════════
+    function nextBlock(cur) {
+      if (!validateBlock(cur)) return;
+      document.getElementById('block-' + cur).classList.remove('visible');
+      document.getElementById('block-' + (cur + 1)).classList.add('visible');
+      currentBlock = cur + 1;
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function prevBlock(cur) {
+      document.getElementById('block-' + cur).classList.remove('visible');
+      document.getElementById('block-' + (cur - 1)).classList.add('visible');
+      currentBlock = cur - 1;
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function updateProgress() {
+      const p = Math.round(((currentBlock - 1) / TOTAL) * 100);
+      document.getElementById('progress-fill').style.width = p + '%';
+      document.getElementById('step-label').textContent = 'Block ' + currentBlock + ' von ' + TOTAL;
+      document.getElementById('step-pct').textContent = p + ' %';
+    }
+
+    // ═══════════════════════════════════════
+    //  SUBMIT
+    // ═══════════════════════════════════════
+    function submitForm() {
+      if (!validateBlock(7)) return;
+      const data = {
+        ts: new Date().toISOString(),
+        age: getSelected('q-age').join('') || 'k.A.',
+        status: getSelected('q-status', 'opt').join(''),
+        plz: document.getElementById('q-plz').value.trim(),
+        golfer: getSelected('q-golfer', 'opt').join(''),
+        hcp: getSelected('q-hcp').join(''),
+        simExp: getSelected('q-sim-exp', 'opt').join(''),
+        interest: getStars('q-interest'),
+        usecase: getSelected('q-usecase'),
+        time: getSelected('q-time'),
+        group: getSelected('q-group', 'opt').join(''),
+        price: parseInt(document.getElementById('q-price').value),
+        abo: getSelected('q-abo', 'opt').join(''),
+        freqSum: getSeasonChip('q-freq-summer'),
+        freqWin: getSeasonChip('q-freq-winter'),
+        featAuto: getStars('feat-auto'),
+        featFood: getStars('feat-food'),
+        featLounge: getStars('feat-lounge'),
+        featShower: getStars('feat-shower'),
+        featStaff: getStars('feat-staff'),
+        featData: getStars('feat-data'),
+        featEquip: getStars('feat-equip'),
+        dist: getSelected('q-dist', 'opt').join(''),
+        lage: getSelected('q-lage').join(''),
+        transport: getSelected('q-transport'),
+        recommend: getSelected('q-recommend', 'opt').join(''),
+        source: getSelected('q-source').join(''),
+        comment: document.getElementById('q-comment').value
+      };
+      submissions.push(data);
+      document.querySelectorAll('.block-card').forEach(b => b.classList.remove('visible'));
+      document.getElementById('success').classList.add('show');
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('step-pct').textContent = '100 %';
+    }
+
+    const POWER_AUTOMATE_URL = "https://n8n.srv1225516.hstgr.cloud/webhook-test/984840a7-691c-463f-a336-4f508a522779https://dein-n8n.cloud/webhook/kontakt";
+
+    // ═══════════════════════════════════════
+    //  FILTER
+    // ═══════════════════════════════════════
+    function toggleFilter(type, val, btn) {
+      const groupId = type === 'age' ? 'filter-age-chips' : 'filter-golf-chips';
+      document.querySelectorAll('#' + groupId + ' .filter-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      filters[type] = val;
+      renderDashboard();
+    }
+    function getFiltered() {
+      return submissions.filter(s => {
+        if (filters.age !== 'Alle' && !s.age.includes(filters.age)) return false;
+        if (filters.golf !== 'Alle' && !s.golfer.toLowerCase().includes(filters.golf)) return false;
+        return true;
+      });
+    }
+
+    // ═══════════════════════════════════════
+    //  DASHBOARD RENDER
+    // ═══════════════════════════════════════
+    function renderDashboard() {
+      const all = getFiltered();
+      const n = all.length;
+      document.getElementById('kpi-total').textContent = n;
+
+      if (n === 0) { renderEmpty(); return; }
+
+      // KPIs
+      const golfers = all.filter(s => s.golfer.includes('aktiv')).length;
+      document.getElementById('kpi-golfer').textContent = pct(golfers, n);
+      const avgPrice = Math.round(all.reduce((a, s) => a + s.price, 0) / n);
+      document.getElementById('kpi-price').textContent = avgPrice + '€';
+      // interest: only rated (>0)
+      const rated = all.filter(s => s.interest > 0);
+      const avgInt = rated.length ? (rated.reduce((a, s) => a + s.interest, 0) / rated.length).toFixed(1) : '–';
+      document.getElementById('kpi-interest').textContent = avgInt + (avgInt !== '–' ? '★' : '');
+      const recYes = all.filter(s => s.recommend.includes('sofort') || s.recommend.includes('Eher ja')).length;
+      document.getElementById('kpi-recommend').textContent = pct(recYes, n);
+
+      // Charts
+      const ages = ['Unter 25', '25–34', '35–44', '45–54', '55–64', '65+'];
+      renderBars('chart-age', ages, s => ages.find(a => s.age === a) || null, all);
+
+      const gKeys = ['aktiv', 'gelegentlich', 'interessiere', 'nicht mein'];
+      const gLabs = ['Aktiver Golfer', 'Gelegentlich', 'Interessiert', 'Kein Golf'];
+      renderBarsCustom('chart-golfer', gKeys, gLabs, s => gKeys.findIndex(k => s.golfer.toLowerCase().includes(k)), all);
+
+      renderRegionTop10(all);
+      renderPriceHisto(all);
+
+      const usecases = ['Training', 'Spaß', 'Gruppen', 'Schnuppern', 'Wettbewerb', 'Geschenk'];
+      renderBarsMulti('chart-usecase', usecases, s => s.usecase, all);
+
+      renderFreqChart(all);
+      renderFeatures(all);
+
+      const rKeys = ['sofort', 'Eher ja', 'Preis', 'Eher nicht'];
+      const rLabs = ['Ja, sofort!', 'Eher ja', 'Kommt auf Preis an', 'Eher nicht'];
+      renderBarsCustom('chart-recommend', rKeys, rLabs, s => rKeys.findIndex(k => s.recommend.includes(k)), all);
+
+      const dists = ['Bis 5 km', '5–15 km', '15–30 km', 'Über 30 km'];
+      renderBarsCustom('chart-dist', dists, dists, s => dists.findIndex(d => s.dist.includes(d.split(' ')[0].replace('Über', 'Über'))), all);
+
+      renderTimeline(all);
+    }
+
+    function pct(v, n) { return n ? Math.round(v / n * 100) + '%' : '–'; }
+
+    function renderEmpty() {
+      ['chart-age', 'chart-golfer', 'chart-usecase', 'chart-dist', 'chart-recommend', 'chart-features', 'chart-region', 'chart-freq'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.innerHTML = '<div class="no-data">Noch keine Daten</div>';
+      });
+      document.getElementById('chart-price').innerHTML = '';
+      document.getElementById('chart-timeline').innerHTML = '';
+    }
+
+    function renderBars(id, labels, fn, data) {
+      const n = data.length;
+      const counts = {}; labels.forEach(l => counts[l] = 0);
+      data.forEach(s => { const v = fn(s); if (v && counts[v] !== undefined) counts[v]++; });
+      const max = Math.max(...Object.values(counts), 1);
+      document.getElementById(id).innerHTML = labels.map(l => `
+    <div class="bar-item">
+      <div class="bar-label">${l}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(counts[l] / max * 100)}%"></div></div>
+      <div class="bar-pct">${Math.round(counts[l] / n * 100)}%</div>
+    </div>`).join('');
+    }
+
+    function renderBarsCustom(id, keys, labels, fn, data) {
+      const n = data.length;
+      const counts = new Array(keys.length).fill(0);
+      data.forEach(s => { const i = fn(s); if (i >= 0) counts[i]++; });
+      const max = Math.max(...counts, 1);
+      document.getElementById(id).innerHTML = labels.map((l, i) => `
+    <div class="bar-item">
+      <div class="bar-label">${l}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(counts[i] / max * 100)}%"></div></div>
+      <div class="bar-pct">${Math.round(counts[i] / n * 100)}%</div>
+    </div>`).join('');
+    }
+
+    function renderBarsMulti(id, keywords, fn, data) {
+      const n = data.length;
+      const counts = {}; keywords.forEach(k => counts[k] = 0);
+      data.forEach(s => {
+        const vals = fn(s);
+        if (Array.isArray(vals)) vals.forEach(v => keywords.forEach(k => { if (v.includes(k)) counts[k]++; }));
+      });
+      const max = Math.max(...Object.values(counts), 1);
+      document.getElementById(id).innerHTML = keywords.map(k => `
+    <div class="bar-item">
+      <div class="bar-label">${k}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(counts[k] / max * 100)}%"></div></div>
+      <div class="bar-pct">${counts[k]}</div>
+    </div>`).join('');
+    }
+
+    function renderRegionTop10(data) {
+      const counts = {};
+      data.forEach(s => { if (s.plz) counts[s.plz] = (counts[s.plz] || 0) + 1; });
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+      const max = sorted.length ? sorted[0][1] : 1;
+      if (!sorted.length) { document.getElementById('chart-region').innerHTML = '<div class="no-data">Noch keine Daten</div>'; return; }
+      document.getElementById('chart-region').innerHTML = sorted.map(([reg, cnt], i) => `
+    <div class="region-row">
+      <div class="region-rank">${i + 1}</div>
+      <div class="region-name">${reg}</div>
+      <div class="region-bar"><div class="region-bar-fill" style="width:${Math.round(cnt / max * 100)}%"></div></div>
+      <div class="region-count">${cnt}</div>
+    </div>`).join('');
+    }
+
+    function renderPriceHisto(data) {
+      const buckets = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75];
+      const counts = new Array(buckets.length).fill(0);
+      data.forEach(s => { const i = buckets.findIndex(b => b >= s.price); if (i >= 0) counts[i]++; });
+      const max = Math.max(...counts, 1);
+      document.getElementById('chart-price').innerHTML = counts.map((c, i) =>
+        `<div class="histo-bar" style="height:${Math.round(c / max * 90)}px" title="${buckets[i]}€: ${c}×"></div>`
+      ).join('');
+      document.getElementById('chart-price-x').innerHTML = buckets.map(b => `<span>${b}</span>`).join('');
+    }
+
+    function renderFreqChart(data) {
+      const labels = ['Mehrmals/Woche', '1×/Woche', '2–3×/Monat', '1×/Monat', 'Selten', 'Gar nicht'];
+      const keywords = ['Mehrmals', '1×/Woche', '2–3×', '1×/Monat', 'Selten', 'Gar nicht'];
+      const cntS = new Array(keywords.length).fill(0);
+      const cntW = new Array(keywords.length).fill(0);
+      data.forEach(s => {
+        keywords.forEach((k, i) => {
+          if (s.freqSum && s.freqSum.includes(k)) cntS[i]++;
+          if (s.freqWin && s.freqWin.includes(k)) cntW[i]++;
+        });
+      });
+      const max = Math.max(...cntS, ...cntW, 1);
+      document.getElementById('chart-freq').innerHTML = labels.map((l, i) => `
+    <div style="margin-bottom:0.6rem;">
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.3rem;">${l}</div>
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.2rem;">
+        <span style="font-size:0.68rem;color:#5dcc88;min-width:22px;">☀️</span>
+        <div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${Math.round(cntS[i] / max * 100)}%;background:linear-gradient(90deg,#2e7d4f,#5dcc88)"></div></div>
+        <span style="font-size:0.74rem;color:#5dcc88;min-width:20px;">${cntS[i]}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <span style="font-size:0.68rem;color:#90b4ff;min-width:22px;">❄️</span>
+        <div class="bar-track" style="flex:1"><div class="bar-fill" style="width:${Math.round(cntW[i] / max * 100)}%;background:linear-gradient(90deg,#4060c0,#90b4ff)"></div></div>
+        <span style="font-size:0.74rem;color:#90b4ff;min-width:20px;">${cntW[i]}</span>
+      </div>
+    </div>`).join('');
+    }
+
+    function renderFeatures(data) {
+      const feats = [
+        { key: 'featAuto', label: '🤖 Automatisierter Zugang' },
+        { key: 'featFood', label: '☕ Verpflegung' },
+        { key: 'featLounge', label: '🛋️ Lounge-Atmosphäre' },
+        { key: 'featShower', label: '🚿 Sanitär & Dusche' },
+        { key: 'featStaff', label: '👨‍💼 Personal auf Wunsch' },
+        { key: 'featData', label: '📊 Trainingsdaten-Abruf' },
+        { key: 'featEquip', label: '🏌️ Equipment-Miete' },
+      ];
+      document.getElementById('chart-features').innerHTML = feats.map(f => {
+        // Only count non-zero ratings
+        const rated = data.filter(s => s[f.key] > 0);
+        if (!rated.length) return `<div class="meter-item">
+      <div class="meter-head"><span>${f.label}</span><span class="meter-score" style="color:var(--muted)">–</span></div>
+      <div class="meter-track"><div class="meter-fill" style="width:0%"></div></div>
+    </div>`;
+        const avg = rated.reduce((a, s) => a + s[f.key], 0) / rated.length;
+        const stars = '★'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
+        return `<div class="meter-item">
+      <div class="meter-head"><span>${f.label}</span><span class="meter-score">${avg.toFixed(1)} <span class="meter-stars">${stars}</span></span></div>
+      <div class="meter-track"><div class="meter-fill" style="width:${Math.round(avg / 5 * 100)}%"></div></div>
+    </div>`;
+      }).join('');
+    }
+
+    function renderTimeline(data) {
+      if (!data.length) { document.getElementById('chart-timeline').innerHTML = ''; return; }
+      const days = {};
+      data.forEach(s => { const d = s.ts.split('T')[0]; days[d] = (days[d] || 0) + 1; });
+      const sorted = Object.keys(days).sort();
+      const max = Math.max(...Object.values(days), 1);
+      document.getElementById('chart-timeline').innerHTML = sorted.map(d =>
+        `<div class="tl-bar" style="height:${Math.round(days[d] / max * 70)}px" title="${d}: ${days[d]}×"></div>`
+      ).join('');
+      document.getElementById('chart-timeline-x').innerHTML = sorted.map(d => `<span>${d.slice(5)}</span>`).join('');
+    }
+  </script>
+</body>
+
+</html>
