@@ -1963,8 +1963,9 @@
     // ═══════════════════════════════════════
     //  SUBMIT
     // ═══════════════════════════════════════
-    function submitForm() {
+    async function submitForm() {
       if (!validateBlock(7)) return;
+
       const data = {
         ts: new Date().toISOString(),
         age: getSelected('q-age').join('') || 'k.A.',
@@ -1995,14 +1996,35 @@
         source: getSelected('q-source').join(''),
         comment: document.getElementById('q-comment').value
       };
-      submissions.push(data);
-      document.querySelectorAll('.block-card').forEach(b => b.classList.remove('visible'));
-      document.getElementById('success').classList.add('show');
-      document.getElementById('progress-fill').style.width = '100%';
-      document.getElementById('step-pct').textContent = '100 %';
+
+      // Sende-Button deaktivieren während der Übertragung
+      const submitBtn = document.querySelector('#block-7 .btn-next');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Wird gesendet …'; }
+
+      try {
+        const response = await fetch(POWER_AUTOMATE_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+
+        // Nur bei Erfolg lokal speichern und Erfolgsmeldung anzeigen
+        submissions.push(data);
+        document.querySelectorAll('.block-card').forEach(b => b.classList.remove('visible'));
+        document.getElementById('success').classList.add('show');
+        document.getElementById('progress-fill').style.width = '100%';
+        document.getElementById('step-pct').textContent = '100 %';
+
+      } catch (err) {
+        console.error('n8n Übertragungsfehler:', err);
+        alert('⚠️ Übertragung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Absenden'; }
+      }
     }
 
-    const POWER_AUTOMATE_URL = "https://n8n.srv1225516.hstgr.cloud/webhook-test/984840a7-691c-463f-a336-4f508a522779https://dein-n8n.cloud/webhook/kontakt";
+    const POWER_AUTOMATE_URL = "https://n8n.srv1225516.hstgr.cloud/webhook-test/984840a7-691c-463f-a336-4f508a522779";
 
     // ═══════════════════════════════════════
     //  FILTER
