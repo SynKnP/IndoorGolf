@@ -11,7 +11,7 @@
   <style>
     :root {
       --bg: #07100a;
-      --surface: rgba(8, 22, 12, 0.88);
+      --surface: rgba(8, 22, 12, 0.5);
       --surface2: rgba(15, 35, 20, 0.9);
       --border: rgba(255, 255, 255, 0.1);
       --gold: #d4a843;
@@ -197,8 +197,8 @@
     }
 
     .progress-track {
-      height: 3px;
-      background: rgba(255, 255, 255, 0.1);
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
       border-radius: 2px;
       overflow: hidden;
     }
@@ -277,7 +277,7 @@
 
     .block-sub {
       font-size: 0.8rem;
-      color: var(--muted);
+      color: var(--text);
       margin-top: 0.15rem;
     }
 
@@ -332,7 +332,7 @@
 
     .q-hint {
       font-size: 0.75rem;
-      color: var(--muted);
+      color: var(--text);
       font-weight: 400;
       margin-left: 0.4rem;
     }
@@ -384,7 +384,7 @@
       width: 17px;
       height: 17px;
       border-radius: 50%;
-      border: 1.5px solid var(--muted);
+      border: 1.5px solid var(--text);
       flex-shrink: 0;
       transition: all 0.2s;
       display: flex;
@@ -420,7 +420,7 @@
       cursor: pointer;
       font-size: 0.82rem;
       transition: all 0.2s;
-      color: var(--muted);
+      color: var(--text);
       user-select: none;
     }
 
@@ -435,7 +435,7 @@
       color: var(--gold-light);
     }
 
-    /* GOLF BALL RATING */
+    /* STAR RATING */
     .star-group {
       display: flex;
       gap: 0.5rem;
@@ -463,7 +463,7 @@
       transform: scale(1.2);
     }
 
-    /* empty = faint outline ball, lit = filled gold ball */
+    /* empty = golden outline star, filled = full gold star */
 
     /* SLIDER */
     .slider-wrap {
@@ -503,7 +503,7 @@
       display: flex;
       justify-content: space-between;
       font-size: 0.74rem;
-      color: var(--muted);
+      color: var(--text);
       margin-top: 0.45rem;
     }
 
@@ -532,7 +532,7 @@
 
     input::placeholder,
     textarea::placeholder {
-      color: var(--muted);
+      color: var(--text);
     }
 
     /* SEASON TABLE */
@@ -546,7 +546,7 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--muted);
+      color: var(--text);
       font-weight: 500;
       border-bottom: 1px solid var(--border);
       text-align: left;
@@ -597,7 +597,7 @@
       user-select: none;
       border: 1px solid var(--border);
       background: rgba(15, 35, 20, 0.5);
-      color: var(--muted);
+      color: var(--text);
     }
 
     .season-chip.selected {
@@ -712,8 +712,7 @@
       line-height: 1.7;
       font-size: 0.92rem;
     }
-
-    </style>
+  </style>
 </head>
 
 <body>
@@ -729,7 +728,7 @@
   <!-- ═══════════════ NAV ═══════════════ -->
   <nav class="tab-nav">
     <div class="nav-logo">⛳ GolfSim</div>
-    <button class="tab-btn active" >Umfrage</button>
+    <button class="tab-btn active">Umfrage</button>
     <a class="tab-btn" href="login.html" style="text-decoration:none;">Auswertung ↗</a>
   </nav>
 
@@ -1268,7 +1267,7 @@
   </div><!-- /page-survey -->
 
   <!-- ═══════════════ DASHBOARD PAGE ═══════════════ -->
-  
+
 
   <script>
     // ═══════════════════════════════════════
@@ -1277,9 +1276,9 @@
     let currentBlock = 1;
     const TOTAL = 7;
 
-    // Init all ball icons to empty on load
+    // Init all star icons to empty on load
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.star').forEach(s => { s.innerHTML = BALL_EMPTY; });
+      document.querySelectorAll('.star').forEach(s => { s.innerHTML = STAR_EMPTY; });
     });
 
     // ═══════════════════════════════════════
@@ -1298,35 +1297,18 @@
       document.querySelectorAll('#' + group + ' .season-chip').forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
     }
-    // Golf ball SVGs
-    const BALL_EMPTY = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="16" cy="16" r="13" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
-  <circle cx="16" cy="16" r="4" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
-  <path d="M16 3 Q18 8 16 10 Q14 8 16 3" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-  <path d="M29 16 Q24 18 22 16 Q24 14 29 16" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+    // Star SVGs
+    const STAR_EMPTY = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <path d="M16 2 L19.5 11 L29 11 L21.5 17 L24.5 26 L16 20 L7.5 26 L10.5 17 L3 11 L12.5 11 Z" fill="none" stroke="#FFD700" stroke-width="1"/>
 </svg>`;
-    const BALL_FILLED = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="bg${Math.random().toString(36).slice(2)}" cx="38%" cy="32%" r="62%">
-      <stop offset="0%" stop-color="#f0c96a"/>
-      <stop offset="55%" stop-color="#d4a843"/>
-      <stop offset="100%" stop-color="#8a6010"/>
-    </radialGradient>
-  </defs>
-  <circle cx="16" cy="16" r="13.5" fill="url(#bg${Math.random().toString(36).slice(2)})" filter="url(#gs)"/>
-  <circle cx="16" cy="16" r="13.5" fill="none" stroke="rgba(212,168,67,0.6)" stroke-width="1"/>
-  <path d="M12 11 Q14 9 16 11 Q14 13 12 11Z" fill="rgba(255,255,255,0.25)"/>
-  <path d="M20 14 Q22 12 23 14 Q21 16 20 14Z" fill="rgba(255,255,255,0.18)"/>
-  <path d="M11 16 Q10 18 12 19 Q13 17 11 16Z" fill="rgba(255,255,255,0.15)"/>
-  <path d="M18 20 Q20 19 21 21 Q19 22 18 20Z" fill="rgba(255,255,255,0.13)"/>
-  <path d="M14 19 Q13 21 15 22 Q16 20 14 19Z" fill="rgba(255,255,255,0.13)"/>
-  <filter id="gs"><feGaussianBlur in="SourceAlpha" stdDeviation="1.5" result="b"/><feComposite in="SourceGraphic" in2="b" operator="over"/></filter>
+    const STAR_FILLED = `<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <path d="M16 2 L19.5 11 L29 11 L21.5 17 L24.5 26 L16 20 L7.5 26 L10.5 17 L3 11 L12.5 11 Z" fill="#FFD700" stroke="#FFD700" stroke-width="1"/>
 </svg>`;
 
     function makeBallHTML(id, count = 5) {
       let html = '';
       for (let i = 1; i <= count; i++) {
-        html += `<span class="star" onclick="rateStar('${id}',${i})" data-idx="${i}" title="${i} von 5">${BALL_EMPTY}</span>`;
+        html += `<span class="star" onclick="rateStar('${id}',${i})" data-idx="${i}" title="${i} von 5">${STAR_EMPTY}</span>`;
       }
       return html;
     }
@@ -1337,10 +1319,10 @@
       const stars = container.querySelectorAll('.star');
       stars.forEach((s, i) => {
         if (i < val) {
-          s.innerHTML = BALL_FILLED;
+          s.innerHTML = STAR_FILLED;
           s.style.filter = 'drop-shadow(0 0 6px rgba(212,168,67,0.6))';
         } else {
-          s.innerHTML = BALL_EMPTY;
+          s.innerHTML = STAR_EMPTY;
           s.style.filter = 'none';
         }
       });
