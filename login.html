@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GolfSim — Auswertung Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07100a;
+      --surface: rgba(8, 22, 12, 0.95);
+      --border: rgba(255, 255, 255, 0.1);
+      --gold: #d4a843;
+      --gold-light: #f0c96a;
+      --green: #2e7d4f;
+      --green-bright: #5dcc88;
+      --text: #f0ece4;
+      --muted: #8a9e90;
+      --red: #e05252;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .golf-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+    .golf-bg img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      display: block;
+    }
+    .golf-bg-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+        rgba(4,10,6,0.75) 0%,
+        rgba(4,10,6,0.55) 40%,
+        rgba(4,10,6,0.85) 100%);
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 1;
+      background: var(--surface);
+      border: 1px solid rgba(212,168,67,0.25);
+      border-radius: 16px;
+      padding: 3rem 2.5rem 2.5rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+      backdrop-filter: blur(24px);
+      animation: fadeUp 0.5s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-logo .icon { font-size: 2.8rem; display: block; margin-bottom: 0.6rem; }
+    .login-logo h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+    }
+    .login-logo p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .form-group { margin-bottom: 1.2rem; }
+    label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.45rem;
+      font-weight: 500;
+    }
+    input[type=text], input[type=password] {
+      width: 100%;
+      background: rgba(15,35,20,0.8);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      padding: 0.82rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type=text]:focus, input[type=password]:focus {
+      border-color: rgba(212,168,67,0.6);
+      box-shadow: 0 0 0 3px rgba(212,168,67,0.1);
+    }
+    input::placeholder { color: var(--muted); }
+
+    .error-msg {
+      display: none;
+      background: rgba(224,82,82,0.12);
+      border: 1px solid rgba(224,82,82,0.35);
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      font-size: 0.82rem;
+      color: var(--red);
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+    .error-msg.show { display: block; }
+
+    .btn-login {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--gold), #9a6e1a);
+      color: #07100a;
+      border: none;
+      border-radius: 9px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      margin-top: 0.4rem;
+    }
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(212,168,67,0.35);
+    }
+    .btn-login:active { transform: scale(0.98); }
+    .btn-login:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 1.8rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .login-footer a {
+      color: var(--green-bright);
+      text-decoration: none;
+    }
+    .login-footer a:hover { text-decoration: underline; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-6px); }
+      80%      { transform: translateX(4px); }
+    }
+    .shake { animation: shake 0.4s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="golf-bg">
+    <img src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=1920&q=80&fit=crop&crop=center" alt="" />
+    <div class="golf-bg-overlay"></div>
+  </div>
+
+  <div class="login-card" id="login-card">
+    <div class="login-logo">
+      <span class="icon">⛳</span>
+      <h1>GolfSim</h1>
+      <p>Auswertungs-Dashboard</p>
+    </div>
+
+    <div class="error-msg" id="error-msg">
+      ❌ Benutzername oder Passwort falsch.
+    </div>
+
+    <div class="form-group">
+      <label for="username">Benutzername</label>
+      <input type="text" id="username" placeholder="Benutzername" autocomplete="username" />
+    </div>
+    <div class="form-group">
+      <label for="password">Passwort</label>
+      <input type="password" id="password" placeholder="••••••••••" autocomplete="current-password" />
+    </div>
+
+    <button class="btn-login" id="login-btn" onclick="doLogin()">Anmelden</button>
+
+    <div class="login-footer">
+      <a href="index.html">← Zurück zur Umfrage</a>
+    </div>
+  </div>
+
+  <!-- Benutzerdaten laden -->
+  <script src="users.js"></script>
+  <script>
+    // Token-Gültigkeit: 8 Stunden in Millisekunden
+    const TOKEN_EXPIRY_MS = 8 * 60 * 60 * 1000;
+
+    // Bereits eingeloggt? Direkt weiterleiten
+    window.addEventListener('DOMContentLoaded', () => {
+      if (isTokenValid()) {
+        window.location.replace('dashboard.html');
+      }
+      document.getElementById('username').focus();
+      document.getElementById('password').addEventListener('keydown', e => {
+        if (e.key === 'Enter') doLogin();
+      });
+      document.getElementById('username').addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('password').focus();
+      });
+    });
+
+    function isTokenValid() {
+      try {
+        const raw = sessionStorage.getItem('golfsim_token');
+        if (!raw) return false;
+        const t = JSON.parse(raw);
+        return t.expires && Date.now() < t.expires;
+      } catch { return false; }
+    }
+
+    async function hmacHex(secret, message) {
+      const enc = new TextEncoder();
+      const key = await crypto.subtle.importKey(
+        'raw', enc.encode(secret),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false, ['sign']
+      );
+      const sig = await crypto.subtle.sign('HMAC', key, enc.encode(message));
+      return Array.from(new Uint8Array(sig))
+        .map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function doLogin() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const btn      = document.getElementById('login-btn');
+      const errBox   = document.getElementById('error-msg');
+      const card     = document.getElementById('login-card');
+
+      if (!username || !password) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Prüfe …';
+      errBox.classList.remove('show');
+
+      // Passwort hashen und gegen users.js prüfen
+      const inputHash = await hmacHex(SECRET, password);
+      const user = USERS.find(u => u.username === username && u.passwordHash === inputHash);
+
+      if (user) {
+        // Gültiges Token erzeugen und in sessionStorage speichern
+        const payload = {
+          username: user.username,
+          displayName: user.displayName,
+          expires: Date.now() + TOKEN_EXPIRY_MS,
+          sig: await hmacHex(SECRET, user.username + ':' + (Date.now() + TOKEN_EXPIRY_MS))
+        };
+        sessionStorage.setItem('golfsim_token', JSON.stringify(payload));
+        window.location.replace('dashboard.html');
+      } else {
+        errBox.classList.add('show');
+        card.classList.remove('shake');
+        void card.offsetWidth; // reflow für Animation-Reset
+        card.classList.add('shake');
+        btn.disabled = false;
+        btn.textContent = 'Anmelden';
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
+      }
+    }
+  </script>
+</body>
+</html>
