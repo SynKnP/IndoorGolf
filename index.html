@@ -1420,6 +1420,8 @@
     // ═══════════════════════════════════════
     //  SUBMIT
     // ═══════════════════════════════════════
+    let submissions = [];
+
     async function submitForm() {
       if (!validateBlock(7)) return;
 
@@ -1466,7 +1468,16 @@
           body: JSON.stringify(data)
         });
 
-        if (!response.ok) throw new Error('HTTP ' + response.status);
+        // n8n Test-Webhook gibt manchmal 200 mit leerem Body
+        // Erfolg = Anfrage kam durch (kein Netzwerkfehler)
+        const text = await response.text();
+        console.log("Status:", response.status, "Body:", text);
+
+
+        // 200 oder 204 = Erfolg
+        if (response.status !== 200 && response.status !== 204) {
+          throw new Error('HTTP ' + response.status);
+        }
 
         // Nur bei Erfolg lokal speichern und Erfolgsmeldung anzeigen
         submissions.push(data);
@@ -1482,7 +1493,7 @@
       }
     }
 
-    const n8n_URL = "https://n8n.srv1225516.hstgr.cloud/webhook-test/984840a7-691c-463f-a336-4f508a522779";
+    const n8n_URL = "https://n8n.srv1225516.hstgr.cloud/webhook/984840a7-691c-463f-a336-4f508a522779";
 
   </script>
 </body>
