@@ -332,7 +332,7 @@
 
     .q-hint {
       font-size: 0.75rem;
-      color: var(--text);
+      color: var(--muted);
       font-weight: 400;
       margin-left: 0.4rem;
     }
@@ -735,7 +735,7 @@
   <!-- ═══════════════ SURVEY PAGE ═══════════════ -->
   <div id="page-survey" class="page active">
     <div class="survey-hero">
-      <div class="hero-eyebrow">⛳ Marktbefragung 2025</div>
+      <div class="hero-eyebrow">⛳ Marktbefragung 2026</div>
       <h1 class="hero-title"><span class="gold">Indoor</span><span class="green">Golf</span> Simulator</h1>
       <p class="hero-sub">Deine Meinung formt ein einzigartiges Erlebnis. Anonym &amp; sicher.</p>
       <div class="hero-time">⏱ ca. 3–4 Minuten</div>
@@ -802,9 +802,9 @@
         </div>
 
         <div class="q">
-          <label class="q-label">Deine Region / PLZ-Bereich <span class="q-req">*</span></label>
-          <input type="text" id="q-plz" placeholder="z.B. 99867 oder Gotha, Erfurt …" maxlength="30">
-          <div class="error-msg" id="err-plz">Bitte Region oder PLZ angeben.</div>
+          <label class="q-label">PLZ-Bereich <span class="q-req">*</span></label>
+          <input type="text" id="q-plz" placeholder="z.B. 99867" maxlength="5">
+          <div class="error-msg" id="err-plz">Bitte PLZ angeben.</div>
         </div>
 
         <div class="nav-row"><span></span><button class="btn btn-next" onclick="nextBlock(1)">Weiter →</button></div>
@@ -824,16 +824,16 @@
           <label class="q-label">Was trifft auf dich zu? <span class="q-req">*</span></label>
           <div class="opts" id="q-golfer">
             <div class="opt" onclick="selectOpt(this,'q-golfer')">
-              <div class="opt-dot"></div>Ich spiele aktiv Golf (mit DGV-Ausweis / Handicap)
+              <div class="opt-dot"></div>Ich spiele aktiv Golf (mit DGV-Ausweis / Mannschaftsspieler)
             </div>
             <div class="opt" onclick="selectOpt(this,'q-golfer')">
-              <div class="opt-dot"></div>Ich spiele gelegentlich (kein offizieller Ausweis)
+              <div class="opt-dot"></div>Ich spiele Golf (mit DGV-Ausweis / Handicap)
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-golfer')">
+              <div class="opt-dot"></div>Ich spiele gelegentlich (ohne DGV-Ausweis, evtl. Platzreife)
             </div>
             <div class="opt" onclick="selectOpt(this,'q-golfer')">
               <div class="opt-dot"></div>Ich interessiere mich für Golf, spiele aber noch nicht
-            </div>
-            <div class="opt" onclick="selectOpt(this,'q-golfer')">
-              <div class="opt-dot"></div>Golf ist (noch) nicht mein Thema
             </div>
           </div>
           <div class="error-msg" id="err-golfer">Bitte eine Option auswählen.</div>
@@ -842,11 +842,11 @@
         <div class="q">
           <label class="q-label">Dein Handicap (falls vorhanden)</label>
           <div class="chips" id="q-hcp">
-            <div class="chip" onclick="selectChip(this,'q-hcp')">Scratch / unter 0</div>
             <div class="chip" onclick="selectChip(this,'q-hcp')">0 – 10</div>
-            <div class="chip" onclick="selectChip(this,'q-hcp')">11 – 18</div>
-            <div class="chip" onclick="selectChip(this,'q-hcp')">19 – 36</div>
-            <div class="chip" onclick="selectChip(this,'q-hcp')">Kein HCP / N/A</div>
+            <div class="chip" onclick="selectChip(this,'q-hcp')">11 – 19</div>
+            <div class="chip" onclick="selectChip(this,'q-hcp')">20 – 35</div>
+            <div class="chip" onclick="selectChip(this,'q-hcp')">36 – 45</div>
+            <div class="chip" onclick="selectChip(this,'q-hcp')">45+ / Kein HCP</div>
           </div>
         </div>
 
@@ -907,8 +907,8 @@
         </div>
 
         <div class="q">
-          <label class="q-label">Für welchen Zweck würdest du buchen? <span class="q-hint">(Mehrfachauswahl
-              möglich)</span></label>
+          <label class="q-label">Für welchen Einsatz würdest du buchen? <span class="q-req">*</span>
+            <span class="q-hint">(Mehrfachauswahl möglich)</span></label>
           <div class="chips" id="q-usecase">
             <div class="chip" onclick="toggleChip(this)">🏋️ Training &amp; Technik</div>
             <div class="chip" onclick="toggleChip(this)">⛳ Spaß &amp; Freizeit</div>
@@ -917,18 +917,20 @@
             <div class="chip" onclick="toggleChip(this)">🏆 Wettbewerb</div>
             <div class="chip" onclick="toggleChip(this)">🎁 Geschenkidee</div>
           </div>
+          <div class="error-msg" id="err-usecase">Bitte mindestens eine Option auswählen.</div>
         </div>
 
         <div class="q">
-          <label class="q-label">Wann würdest du am liebsten spielen? <span class="q-hint">(Mehrfachauswahl
-              möglich)</span></label>
+          <label class="q-label">Wann würdest du am liebsten spielen? <span class="q-req">*</span>
+            <span class="q-hint">(Mehrfachauswahl möglich)</span></label>
           <div class="chips" id="q-time">
             <div class="chip" onclick="toggleChip(this)">Mo–Fr Vormittag</div>
-            <div class="chip" onclick="toggleChip(this)">Mo–Fr Mittag</div>
+            <div class="chip" onclick="toggleChip(this)">Mo–Fr Nachmittag</div>
             <div class="chip" onclick="toggleChip(this)">Mo–Fr Abend</div>
             <div class="chip" onclick="toggleChip(this)">Samstag</div>
             <div class="chip" onclick="toggleChip(this)">Sonntag</div>
           </div>
+          <div class="error-msg" id="err-time">Bitte mindestens eine Option auswählen.</div>
         </div>
 
         <div class="q">
@@ -975,10 +977,13 @@
         </div>
 
         <div class="q">
-          <label class="q-label">Würdest du ein Paket- / Abo-Modell nutzen?</label>
+          <label class="q-label">Würdest du ein Paket- / Abo-Modell nutzen? <span class="q-req">*</span></label>
           <div class="opts" id="q-abo">
             <div class="opt" onclick="selectOpt(this,'q-abo')">
               <div class="opt-dot"></div>Ja, sehr gerne — festes Kontingent pro Monat
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-abo')">
+              <div class="opt-dot"></div>Ja, vergünstigter Paketpreis
             </div>
             <div class="opt" onclick="selectOpt(this,'q-abo')">
               <div class="opt-dot"></div>Vielleicht, kommt auf Preis &amp; Konditionen an
@@ -987,6 +992,7 @@
               <div class="opt-dot"></div>Nein, ich buche lieber einzeln
             </div>
           </div>
+          <div class="error-msg" id="err-abo">Bitte eine Option auswählen.</div>
         </div>
 
         <div class="q">
@@ -1127,11 +1133,11 @@
               <div style="font-size:0.84rem;margin-bottom:0.5rem;color:var(--text);">🏌️ Golf-Equipment zur Miete
                 (Schläger, Schuhe, Handschuh)</div>
               <div class="star-group" id="feat-equip" data-val="0">
-                <span class="star" onclick="rateStar('feat-equip',1)"></span><span class="star"
-                  onclick="rateStar('feat-equip',2)"></span><span class="star"
-                  onclick="rateStar('feat-equip',3)"></span><span class="star"
-                  onclick="rateStar('feat-equip',4)"></span><span class="star"
-                  onclick="rateStar('feat-equip',5)"></span>
+                <span class="star" onclick="rateStar('feat-equip',1)"></span>
+                <span class="star" onclick="rateStar('feat-equip',2)"></span>
+                <span class="star" onclick="rateStar('feat-equip',3)"></span>
+                <span class="star" onclick="rateStar('feat-equip',4)"></span>
+                <span class="star" onclick="rateStar('feat-equip',5)"></span>
               </div>
             </div>
 
@@ -1162,10 +1168,10 @@
               <div class="opt-dot"></div>Bis 5 km — zu Fuß oder mit dem Fahrrad
             </div>
             <div class="opt" onclick="selectOpt(this,'q-dist')">
-              <div class="opt-dot"></div>5–15 km
+              <div class="opt-dot"></div>5 – 15 km
             </div>
             <div class="opt" onclick="selectOpt(this,'q-dist')">
-              <div class="opt-dot"></div>15–30 km
+              <div class="opt-dot"></div>15 – 30 km
             </div>
             <div class="opt" onclick="selectOpt(this,'q-dist')">
               <div class="opt-dot"></div>Über 30 km — wenn das Angebot überzeugt
@@ -1175,7 +1181,7 @@
         </div>
 
         <div class="q">
-          <label class="q-label">Welche Lage bevorzugst du?</label>
+          <label class="q-label">Welche Lage bevorzugst du? <span class="q-req">*</span></label>
           <div class="chips" id="q-lage">
             <div class="chip" onclick="selectChip(this,'q-lage')">Stadtzentrum</div>
             <div class="chip" onclick="selectChip(this,'q-lage')">Stadtrand</div>
@@ -1183,16 +1189,19 @@
             <div class="chip" onclick="selectChip(this,'q-lage')">Ländlich / Grün</div>
             <div class="chip" onclick="selectChip(this,'q-lage')">Ist mir egal</div>
           </div>
+          <div class="error-msg" id="err-lage">Bitte eine Option auswählen.</div>
         </div>
 
         <div class="q">
-          <label class="q-label">Wie kommst du hin? <span class="q-hint">(Mehrfachauswahl möglich)</span></label>
+          <label class="q-label">Welche Verkehrsanbindung ist dir wichtig? <span class="q-req">*</span>
+            <span class="q-hint">(Mehrfachauswahl möglich)</span></label>
           <div class="chips" id="q-transport">
             <div class="chip" onclick="toggleChip(this)">🚗 Auto</div>
+            <div class="chip" onclick="toggleChip(this)">🚌 Bus / Bahn</div>
             <div class="chip" onclick="toggleChip(this)">🚴 Fahrrad / E-Bike</div>
             <div class="chip" onclick="toggleChip(this)">🚶 Zu Fuß</div>
-            <div class="chip" onclick="toggleChip(this)">🚌 Bus / Bahn</div>
           </div>
+          <div class="error-msg" id="err-transport">Bitte mindestens eine Option auswählen.</div>
         </div>
 
         <div class="nav-row">
@@ -1215,16 +1224,19 @@
           <label class="q-label">Würdest du dieses Konzept weiterempfehlen? <span class="q-req">*</span></label>
           <div class="opts" id="q-recommend">
             <div class="opt" onclick="selectOpt(this,'q-recommend')">
-              <div class="opt-dot"></div>Ja, absolut sofort!
+              <div class="opt-dot"></div>Ja, absolut!
             </div>
             <div class="opt" onclick="selectOpt(this,'q-recommend')">
-              <div class="opt-dot"></div>Eher ja — klingt sehr interessant
+              <div class="opt-dot"></div>Eher ja — klingt interessant
             </div>
             <div class="opt" onclick="selectOpt(this,'q-recommend')">
-              <div class="opt-dot"></div>Kommt auf Preis &amp; Lage an
+              <div class="opt-dot"></div>Abhängig vom Preis &amp; Lage
             </div>
             <div class="opt" onclick="selectOpt(this,'q-recommend')">
-              <div class="opt-dot"></div>Eher nicht mein Ding
+              <div class="opt-dot"></div>Eher nein, nicht mein Ding
+            </div>
+            <div class="opt" onclick="selectOpt(this,'q-recommend')">
+              <div class="opt-dot"></div>Nein!
             </div>
           </div>
           <div class="error-msg" id="err-recommend">Bitte eine Option auswählen.</div>
@@ -1233,12 +1245,11 @@
         <div class="q">
           <label class="q-label">Wie bist du auf diese Umfrage aufmerksam geworden?</label>
           <div class="chips" id="q-source">
-            <div class="chip" onclick="selectChip(this,'q-source')">E-Mail</div>
-            <div class="chip" onclick="selectChip(this,'q-source')">QR-Code / Aushang</div>
+            <div class="chip" onclick="selectChip(this,'q-source')">Golfclub</div>
+            <div class="chip" onclick="selectChip(this,'q-source')">Flyer (QR-Code)</div>
             <div class="chip" onclick="selectChip(this,'q-source')">Social Media</div>
             <div class="chip" onclick="selectChip(this,'q-source')">Bekannte / Freunde</div>
-            <div class="chip" onclick="selectChip(this,'q-source')">Golfclub</div>
-            <div class="chip" onclick="selectChip(this,'q-source')">Website</div>
+            <div class="chip" onclick="selectChip(this,'q-source')">E-Mail</div>
           </div>
         </div>
 
@@ -1305,14 +1316,6 @@
   <path d="M16 2 L19.5 11 L29 11 L21.5 17 L24.5 26 L16 20 L7.5 26 L10.5 17 L3 11 L12.5 11 Z" fill="#FFD700" stroke="#FFD700" stroke-width="1"/>
 </svg>`;
 
-    function makeBallHTML(id, count = 5) {
-      let html = '';
-      for (let i = 1; i <= count; i++) {
-        html += `<span class="star" onclick="rateStar('${id}',${i})" data-idx="${i}" title="${i} von 5">${STAR_EMPTY}</span>`;
-      }
-      return html;
-    }
-
     function rateStar(group, val) {
       const container = document.getElementById(group);
       if (!container) return;
@@ -1367,18 +1370,24 @@
       }
       if (n === 3) {
         const i = getStars('q-interest') > 0; showErr('err-interest', !i); if (!i) ok = false;
+        const us = getSelected('q-usecase').length > 0; showErr('err-usecase', !us); if (!us) ok = false;
+        const ti = getSelected('q-time').length > 0; showErr('err-time', !ti); if (!ti) ok = false;
         const gr = getSelected('q-group', 'opt').length > 0; showErr('err-group', !gr); if (!gr) ok = false;
       }
       if (n === 4) {
+        const abo = getSelected('q-abo', 'opt').length > 0; showErr('err-abo', !abo); if (!abo) ok = false;
         const fs = getSeasonChip('q-freq-summer') !== '';
         const fw = getSeasonChip('q-freq-winter') !== '';
         showErr('err-freq', !(fs && fw)); if (!(fs && fw)) ok = false;
       }
       if (n === 6) {
         const d = getSelected('q-dist', 'opt').length > 0; showErr('err-dist', !d); if (!d) ok = false;
+        const la = getSelected('q-lage').length > 0; showErr('err-lage', !la); if (!la) ok = false;
+        const tr = getSelected('q-transport').length > 0; showErr('err-transport', !tr); if (!tr) ok = false;
       }
       if (n === 7) {
         const r = getSelected('q-recommend', 'opt').length > 0; showErr('err-recommend', !r); if (!r) ok = false;
+        const so = getSelected('q-source').length > 0; showErr('err-source', !so); if (!so) ok = false;
       }
       return ok;
     }
@@ -1442,15 +1451,16 @@
         transport: getSelected('q-transport'),
         recommend: getSelected('q-recommend', 'opt').join(''),
         source: getSelected('q-source').join(''),
+        email: document.getElementById('q-email').value,
         comment: document.getElementById('q-comment').value
       };
 
       // Sende-Button deaktivieren während der Übertragung
-      const submitBtn = document.querySelector('#block-7 .btn-next');
+      const submitBtn = document.querySelector('.btn-submit');
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Wird gesendet …'; }
 
       try {
-        const response = await fetch(POWER_AUTOMATE_URL, {
+        const response = await fetch(n8n_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
@@ -1472,7 +1482,7 @@
       }
     }
 
-    const POWER_AUTOMATE_URL = "https://n8n.srv1225516.hstgr.cloud/webhook-test/984840a7-691c-463f-a336-4f508a522779";
+    const n8n_URL = "https://n8n.srv1225516.hstgr.cloud/webhook-test/984840a7-691c-463f-a336-4f508a522779";
 
   </script>
 </body>
