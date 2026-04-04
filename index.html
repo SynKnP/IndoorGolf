@@ -259,7 +259,7 @@
       height: 38px;
       border-radius: 50%;
       background: var(--accent);
-      border: 1px solid var(--green);
+      border: 2px solid var(--green);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -273,6 +273,7 @@
       font-family: 'Playfair Display', serif;
       font-size: 1.15rem;
       font-weight: 600;
+      color: var(--green-bright);
     }
 
     .block-sub {
@@ -323,7 +324,8 @@
       font-weight: 500;
       margin-bottom: 0.85rem;
       line-height: 1.5;
-      color: var(--text);
+      /* color: var(--text); */
+      color: var(--green-bright);
     }
 
     .q-req {
@@ -643,7 +645,7 @@
       color: #fff;
       border: 1px solid var(--green);
       flex: 1;
-      max-width: 200px;
+      max-width: 135px;
     }
 
     .btn-next:hover {
@@ -729,7 +731,7 @@
   <nav class="tab-nav">
     <div class="nav-logo">⛳ GolfSim</div>
     <button class="tab-btn active">Umfrage</button>
-    <a class="tab-btn" href="login.html" style="text-decoration:none;">Auswertung ↗</a>
+    <!-- <a class="tab-btn" href="login.html" style="text-decoration:none;">Auswertung ↗</a> -->
   </nav>
 
   <!-- ═══════════════ SURVEY PAGE ═══════════════ -->
@@ -802,9 +804,9 @@
         </div>
 
         <div class="q">
-          <label class="q-label">PLZ-Bereich <span class="q-req">*</span></label>
-          <input type="text" id="q-plz" placeholder="z.B. 99867" maxlength="5">
-          <div class="error-msg" id="err-plz">Bitte PLZ angeben.</div>
+          <label class="q-label">Woher kommst du? <span class="q-req">*</span></label>
+          <input type="text" id="q-plz" placeholder="z.B. 99867" maxlength="5" pattern="[0-9]{5}">
+          <div class="error-msg" id="err-plz">Bitte eine gültige 5-stellige PLZ angeben.</div>
         </div>
 
         <div class="nav-row"><span></span><button class="btn btn-next" onclick="nextBlock(1)">Weiter →</button></div>
@@ -966,11 +968,11 @@
         </div>
 
         <div class="q">
-          <label class="q-label">Welchen Stunden-Preis findest du fair? (1–2 Personen) <span
-              class="q-req">*</span></label>
+          <label class="q-label">Welchen Stunden-Preis findest du fair?
+            <span class="q-req">*</span><span class="q-hint"> (1–2 Personen)</span></label>
           <div class="slider-wrap">
-            <div class="slider-val" id="price-val">45 €</div>
-            <input type="range" id="q-price" min="25" max="75" step="5" value="45"
+            <div class="slider-val" id="price-val">50 €</div>
+            <input type="range" id="q-price" min="25" max="75" step="5" value="50"
               oninput="updateSlider('q-price','price-val','€')">
             <div class="slider-labels"><span>25 €</span><span>50 €</span><span>75 €</span></div>
           </div>
@@ -996,7 +998,8 @@
         </div>
 
         <div class="q">
-          <label class="q-label">Wie häufig würdest du voraussichtlich buchen? <span class="q-req">*</span>
+          <label class="q-label">Wie häufig würdest du voraussichtlich buchen?
+            <span class="q-req">*</span>
             <span class="q-hint">(Bitte beide Saisonhälften einschätzen)</span>
           </label>
           <table class="season-table">
@@ -1008,28 +1011,28 @@
             </thead>
             <tbody>
               <tr>
-                <td><span class="season-badge badge-summer">☀️ Apr – Sep</span><br><small
+                <td><span class="season-badge badge-summer">☀️ Apr–Sep</span><br><small
                     style="color:var(--muted);font-size:0.72rem">Outdoor-Saison</small></td>
                 <td>
                   <div class="season-chips" id="q-freq-summer">
-                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">Mehrmals/Woche</div>
-                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">1×/Woche</div>
-                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">2–3×/Monat</div>
-                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">1×/Monat</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">Mehrmals / Woche</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">1× / Woche</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">2–3× /Monat</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">1× / Monat</div>
                     <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">Selten / Events</div>
                     <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-summer')">Gar nicht</div>
                   </div>
                 </td>
               </tr>
               <tr>
-                <td><span class="season-badge badge-winter">❄️ Okt – Mär</span><br><small
+                <td><span class="season-badge badge-winter">❄️ Okt–Mär</span><br><small
                     style="color:var(--muted);font-size:0.72rem">Wintersaison</small></td>
                 <td>
                   <div class="season-chips" id="q-freq-winter">
-                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">Mehrmals/Woche</div>
-                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">1×/Woche</div>
-                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">2–3×/Monat</div>
-                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">1×/Monat</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">Mehrmals / Woche</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">1× / Woche</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">2–3× / Monat</div>
+                    <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">1× / Monat</div>
                     <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">Selten / Events</div>
                     <div class="season-chip" onclick="selectSeasonChip(this,'q-freq-winter')">Gar nicht</div>
                   </div>
@@ -1181,15 +1184,16 @@
         </div>
 
         <div class="q">
-          <label class="q-label">Welche Lage bevorzugst du? <span class="q-req">*</span></label>
+          <label class="q-label">Welche Lagen bevorzugst du? <span class="q-req">*</span>
+            <span class="q-hint">(Mehrfachauswahl möglich)</span></label>
           <div class="chips" id="q-lage">
-            <div class="chip" onclick="selectChip(this,'q-lage')">Stadtzentrum</div>
-            <div class="chip" onclick="selectChip(this,'q-lage')">Stadtrand</div>
-            <div class="chip" onclick="selectChip(this,'q-lage')">Gewerbegebiet</div>
-            <div class="chip" onclick="selectChip(this,'q-lage')">Ländlich / Grün</div>
-            <div class="chip" onclick="selectChip(this,'q-lage')">Ist mir egal</div>
+            <div class="chip" onclick="toggleChip(this)">Stadtzentrum</div>
+            <div class="chip" onclick="toggleChip(this)">Stadtrand</div>
+            <div class="chip" onclick="toggleChip(this)">Gewerbegebiet</div>
+            <div class="chip" onclick="toggleChip(this)">Ländlich / Grün</div>
+            <div class="chip" onclick="toggleChip(this)">Ist mir egal</div>
           </div>
-          <div class="error-msg" id="err-lage">Bitte eine Option auswählen.</div>
+          <div class="error-msg" id="err-lage">Bitte mindestens eine Option auswählen.</div>
         </div>
 
         <div class="q">
@@ -1362,7 +1366,7 @@
       if (n === 1) {
         const age = getSelected('q-age').length > 0; showErr('err-age', !age); if (!age) ok = false;
         const st = getSelected('q-status', 'opt').length > 0; showErr('err-status', !st); if (!st) ok = false;
-        const plz = document.getElementById('q-plz').value.trim().length > 0; showErr('err-plz', !plz); if (!plz) ok = false;
+        const plzVal = document.getElementById('q-plz').value.trim(); const plz = /^\d{5}$/.test(plzVal); showErr('err-plz', !plz); if (!plz) ok = false;
       }
       if (n === 2) {
         const g = getSelected('q-golfer', 'opt').length > 0; showErr('err-golfer', !g); if (!g) ok = false;
@@ -1379,6 +1383,17 @@
         const fs = getSeasonChip('q-freq-summer') !== '';
         const fw = getSeasonChip('q-freq-winter') !== '';
         showErr('err-freq', !(fs && fw)); if (!(fs && fw)) ok = false;
+      }
+      if (n === 5) {
+        const fau = getStars('feat-auto') > 0;
+        const ffo = getStars('feat-food') > 0;
+        const flo = getStars('feat-lounge') > 0;
+        const fsh = getStars('feat-shower') > 0;
+        const fst = getStars('feat-staff') > 0;
+        const fda = getStars('feat-data') > 0;
+        const feq = getStars('feat-equip') > 0;
+        const allRated = fau && ffo && flo && fsh && fst && fda && feq;
+        showErr('err-feats', !allRated); if (!allRated) ok = false;
       }
       if (n === 6) {
         const d = getSelected('q-dist', 'opt').length > 0; showErr('err-dist', !d); if (!d) ok = false;
@@ -1449,7 +1464,7 @@
         featData: getStars('feat-data'),
         featEquip: getStars('feat-equip'),
         dist: getSelected('q-dist', 'opt').join(''),
-        lage: getSelected('q-lage').join(''),
+        lage: getSelected('q-lage'),
         transport: getSelected('q-transport'),
         recommend: getSelected('q-recommend', 'opt').join(''),
         source: getSelected('q-source').join(''),
